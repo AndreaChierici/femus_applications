@@ -7,7 +7,7 @@
 # STEADY STATE AND NON LINEARITY
 # ---------------------------------------------------------------
 # SolveSteady=1 then only steady eqs (dflt:0; option:0(no),1) 
-  SolveSteady  0
+  SolveSteady  1
 # MaxNonLinearIterations >0: non linear problem   (default 1) 
   MaxNonLinearIterations    0 
 # DynamicUnderRelaxation=0.: no urelaxation (dflt:0.; option:0<u<1)   
@@ -44,9 +44,9 @@
 #        DTgroup10       KrobinT,Kwall
 #
 # 19,20,21,22,29,30,32,51,52,53,54
-   Tgroup10          Twall
+   Tgroup10          Twall0
    Tgroup11          Twall0
    Tgroup12          Twall0
-   Tgroup13          insulation
+   Tgroup13          Twall0
  / #######################################################################
   

@@ -11,7 +11,7 @@
 
 // INITIAL CONDITION ---------------------------------------------------------------------
 void MGSolT::ic_read(int bc_gam, int bc_mat, double xp[], int iel, double u_value[]) {
-  u_value[0] = 573;
+  u_value[0] = 0.;
   return;
 }
 

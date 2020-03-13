@@ -25,14 +25,14 @@
  #
  # domain limits for libmesh generation
  #
-  LXB 0.
-  LXE 0.03025
+  LXB -1.
+  LXE 1.
   LYB 0.
-  LYE 0.01
+  LYE 0.
   LZB 0.
-  LZE 0.01
+  LZE 0.
  # discretization along space directions for libemsh gen
-  nintervx      10
-  nintervy      20
-  nintervz      4
+  nintervx      2
+  nintervy      0
+  nintervz      0
  / #-------------------------------------------------------------- 
