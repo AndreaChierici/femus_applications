@@ -54,29 +54,45 @@ class MGSolT : public MGSolDA {
   double _y_dist;     ///< distance from the wall
 
   double _T_1ts[NDOF_FEM], _T_2ts[NDOF_FEM];
+  double _T_jel[NDOF_FEM];
 
   // mesh -------------------------------------------------------------------------------------------------
   const int _offset;                     ///< = _mgmesh._NoNodes[_NoLevels-1]= mesh nodes
   double _xx_qnds[NDOF_FEM * DIMENSION]; /**< elem coords */
   double _xxb_qnds[NDOF_FEMB * DIMENSION];
+  double _xx_qnds_j[NDOF_FEM * DIMENSION]; /**< elem coords */
+  double _xxb_qnds_j[NDOF_FEMB * DIMENSION];
 
   // -------------------- class field ---------------------------------------------------------------------
   // element boundary conditions
   int _bc_vol[NDOF_FEM]; /**<  b.cond from function */
   int _bc_bd[NDOF_FEM];  /**< b.cond flags */
   int _bc_el[NDOF_FEM];  /**<  b.cond in matrix assemblying */
+  int _bc_vol_j[NDOF_FEM]; /**<  b.cond from function */
+  int _bc_bd_j[NDOF_FEM];  /**< b.cond flags */
   // ------------------ integration -----------------------
   //  fields at gaussian points
   double _ub_g[3][30];    /**< external field  (0-1-2 degree)*/
   double _xxg[DIMENSION]; /**< gauss pts*/
   double _InvJac2[DIMENSION * DIMENSION];
+  double _InvJacJ[DIMENSION * DIMENSION];
   double _ub_dxg[2 * DIMENSION];  ///< external field derivative  (0-1-2 degree)
 
   double _Wall_dist;
   bool _SolveT = true;
   double _wall_frac;
   int _Axisym;
+  
+  DenseMatrixM _CClocalII;
+  DenseMatrixM _CClocalIJ;
+  DenseMatrixM _CClocalJI;
+  DenseMatrixM _CClocalJJ;
+  DenseVectorM _Res_nonlocalI;
+  DenseVectorM _Res_nonlocalJ;
+  DenseMatrixM _CClocal_refined;
+  DenseVectorM _Res_local_refined;
 
+  
  public:
   // ==========================================================================
   // =========         Constructor - Destructor  ==============================
@@ -139,9 +155,22 @@ class MGSolT : public MGSolDA {
   // ==========================================================================
   /// This function assembles the volume integral to obtain the algebraic sytem.
   /// It is called by MGSolT::GenMatRhs in MGSolverT.C
-  void vol_integral(
-      const int el_ndof2 /**< el dofs*/, const int el_ngauss /**< #pt gauss  */, const int mode);
-  // ==========================================================================
+  void assembly_laplacian( const int el_ndof2 , const int el_ngauss , const int mode );
+  
+  void rhs_assembly( const int el_ndof2, const int el_ngauss );
+  
+  void assembly_frac_lap(const int el_ndof2, const int el_ngauss, 
+                     const int el_ndof_j, const int el_ngauss_j, double s_frac);
+  
+  void adaptive_ref_frac( const int el_ndof_i, const int el_ngauss, 
+                            const int el_ndof_j, const int el_ngauss_j, double s_frac, unsigned const Nsplit
+                        , int iel);
+  
+  void GetElementPartition1D(const std::vector <double >  & xg1, const std::vector < std::vector <double > > & x1,
+                             const unsigned &split, const unsigned & totalNumberofSplits,  
+                             std::vector < std::vector < std::vector<double>>> &x);
+  
+  void GetElementPartitionQuad(const std::vector <double >  & xg1, const std::vector < std::vector <double > > & xNodes, const unsigned & split, const unsigned & totalNumberofSplits,  std::vector < std::vector < std::vector<double>>> &x);// ==========================================================================
   /// This function computes the field values of all fields in the data structure.
   /// The number _FF_index[]*NDOF_FEM sets the location of the fields in the data
   /// vector _data.ub[]
